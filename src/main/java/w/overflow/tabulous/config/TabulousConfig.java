@@ -114,26 +114,41 @@ public class TabulousConfig extends Vigilant {
 
 
     @Property(
-            type = PropertyType.CHECKBOX,
+            type = PropertyType.SWITCH,
             name = "Custom Tab Options",
-            description = "These settings are for tab customization, including colors, animations, and more.\n\u00A7eThese settings only take effect on the Tabulous mode!",
+            description = "Enable full settings settings are for tab customization, including colors, animations, and more.",
             category = "Tabulous Customization"
     )
     public static boolean customTab = true;
     @Property(
+            type = PropertyType.DECIMAL_SLIDER,
+            name = "Animation Speed",
+            description = "Animation speed for when opening the window. (default: 12)",
+            category = "Tabulous Customization", subcategory = "Animations",
+            minF = 2f, maxF = 30f
+    )
+    public static float animSpeed = 12f;
+    @Property(
             type = PropertyType.PARAGRAPH,
             name = "Custom Header Text",
             description = "Text for the custom header. Supports Minecraft color codes.\nSet to 'default' to disable.",
-            category = "Tabulous Customization", subcategory = "Headers/Footers"
+            category = "Tabulous Customization", subcategory = "Custom Text"
     )
     public static String headerText = "default";
     @Property(
             type = PropertyType.PARAGRAPH,
             name = "Custom Footer Text",
             description = "Text for the custom footer. Supports Minecraft color codes.\nSet to 'default' to disable.",
-            category = "Tabulous Customization", subcategory = "Headers/Footers"
+            category = "Tabulous Customization", subcategory = "Custom Text"
     )
     public static String footerText = "default";
+    @Property(
+            type = PropertyType.TEXT,
+            name = "Custom Name Text",
+            description = "Text for your name in the tab list. Supports Minecraft color codes.\nSet to 'default' to disable.",
+            category = "Tabulous Customization", subcategory = "Custom Text"
+    )
+    public static String myNameText = "default";
     @Property(
             type = PropertyType.COLOR,
             name = "Tab Color",
@@ -143,11 +158,11 @@ public class TabulousConfig extends Vigilant {
     public static Color tabColor = new Color(50, 50, 50, 100);
     @Property(
             type = PropertyType.COLOR,
-            name = "Tab Name Color",
-            description = "Color for the names of people in tab.",
+            name = "Tab Entry Color",
+            description = "Color for the entries of people in tab. (Background color beneath the names)",
             category = "Tabulous Customization", subcategory = "Colors"
     )
-    public static Color tabNameColor = new Color(50, 50, 50, 200);
+    public static Color tabItemColor = new Color(50, 50, 50, 170);
 
 
     @Property(
@@ -174,5 +189,14 @@ public class TabulousConfig extends Vigilant {
     public TabulousConfig() {
         super(new File(Tabulous.modDir, Tabulous.ID + ".toml"), Tabulous.NAME);
         initialize();
+
+        // of course vigilance only supports booleans as dependencies..
+        //addDependency("customTab","useCustomNameColor");
+        //addDependency("customTab","headerText");
+        //addDependency("customTab","footerText");
+        //addDependency("customTab","tabItemColor");
+        //addDependency("customTab","tabColor");
+        //addDependency("customTab","myNameText");
+        //addDependency("useCustomNameColor","tabNameColor");
     }
 }
