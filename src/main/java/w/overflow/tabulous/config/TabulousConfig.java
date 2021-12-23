@@ -11,6 +11,7 @@ import w.overflow.tabulous.updater.Updater;
 import java.awt.*;
 import java.io.File;
 
+@SuppressWarnings("unused")
 public class TabulousConfig extends Vigilant {
     @Property(
             type = PropertyType.SWITCH,
@@ -26,12 +27,23 @@ public class TabulousConfig extends Vigilant {
             category = "General", subcategory = "General"
     )
     public static boolean toggle = false;
+    @Property(
+            type = PropertyType.SWITCH,
+            name = "Disable Tab",
+            description = "Don't like tab? Remove it!",
+            category = "General", subcategory = "General"
+    )
+    public static boolean disabled = false;
 
 
+    @Property(type = PropertyType.SWITCH,
+            name = "Animations", description = "Enable animations on the window.",
+            category = "Tab")
+    public static boolean animations = true;
     @Property(type = PropertyType.SELECTOR,
-            name = "Tab Styling", description = "Styling to use when rendering the tab menu.",
-            category = "Tab", options = {"Vanilla-Style", "Vanilla+ (Animated)", "Tabulous (Reimagined Gui)", "Tab Disabled"})
-    public static int strategy = 1;
+            name = "Tab Location", description = "Location to draw the tab menu.\n\u00a7eDoesn't currently work!",
+            category = "Tab", options = {"Top", "Bottom", "Left"})
+    public static int location = 0;
 
     @Property(
             type = PropertyType.SWITCH,
@@ -50,7 +62,7 @@ public class TabulousConfig extends Vigilant {
     @Property(
             type = PropertyType.SLIDER,
             name = "Top Position",
-            description = "Position of the top of the tab menu. (default: 10)\nSet it to 0 to be seamless with the top of the screen.",
+            description = "Position of the top of the tab menu. (default: 10)\nSet it to 0 to be seamless with the top of the screen. \u00a7eDoesn't currently work!",
             category = "Tab", subcategory = "General", max = 20
     )
     public static int topPosition = 10;
@@ -64,7 +76,7 @@ public class TabulousConfig extends Vigilant {
     @Property(
             type = PropertyType.SWITCH,
             name = "Show Ping Numbers",
-            description = "Show the ping values as numbers instead on the tab menu.\nThis will replace the normal ping render method, so don't try having Show Ping on as well. It won't work.",
+            description = "Show the ping values as numbers instead on the tab menu.",
             category = "Tab", subcategory = "Ping"
     )
     public static boolean renderPingNums = false;
@@ -116,18 +128,18 @@ public class TabulousConfig extends Vigilant {
     @Property(
             type = PropertyType.SWITCH,
             name = "Custom Tab Options",
-            description = "Enable full settings settings are for tab customization, including colors, animations, and more.",
+            description = "Enable full settings settings are for tab customization, including colors, animations, and more.\n\u00a7eEnable this for the settings on this page to work!",
             category = "Tabulous Customization"
     )
     public static boolean customTab = true;
     @Property(
             type = PropertyType.DECIMAL_SLIDER,
             name = "Animation Speed",
-            description = "Animation speed for when opening the window. (default: 12)",
+            description = "Animation speed for when opening the window. (default: 10)",
             category = "Tabulous Customization", subcategory = "Animations",
             minF = 2f, maxF = 30f
     )
-    public static float animSpeed = 12f;
+    public static float animSpeed = 10f;
     @Property(
             type = PropertyType.PARAGRAPH,
             name = "Custom Header Text",
@@ -164,12 +176,28 @@ public class TabulousConfig extends Vigilant {
     )
     public static Color tabItemColor = new Color(50, 50, 50, 170);
 
+    @Property(
+            type = PropertyType.BUTTON,
+            name = "Reset",
+            description = "Reset the colors and texts to their defaults.\nYou might need to reopen this window for it to update.",
+            category = "Tabulous Customization", placeholder = "Reset"
+    )
+    public void resetColors() {
+        tabItemColor = new Color(50, 50, 50, 170);
+        tabColor = new Color(50, 50, 50, 100);
+        myNameText = "default";
+        headerText = "default";
+        footerText = "default";
+        Tabulous.config.markDirty();
+        Tabulous.config.writeData();
+    }
+
 
     @Property(
             type = PropertyType.SWITCH,
             name = "Show Update Notification",
             description = "Show a notification when you start Minecraft informing you of new updates.",
-            category = "Updates & Support", subcategory = "Updater"
+            category = "General", subcategory = "Updates"
     )
     public static boolean showUpdate = true;
 
@@ -177,7 +205,7 @@ public class TabulousConfig extends Vigilant {
             type = PropertyType.BUTTON,
             name = "Update Now",
             description = "Update by clicking the button.",
-            category = "Updates & Support", subcategory = "Updater"
+            category = "General", subcategory = "Updates", placeholder = "Update"
     )
     public void update() {
         if (Updater.shouldUpdate) EssentialAPI.getGuiUtil()
