@@ -102,15 +102,62 @@ public abstract class GuiPlayerTabOverlayMixin {
     @ModifyArgs(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiPlayerTabOverlay;drawRect(IIIII)V", ordinal = 1))
     public void redrawRect(Args args) {
         args.set(4, TabulousConfig.tabColor.getRGB());
-        List<String> list1 = this.mc.fontRendererObj.listFormattedStringToWidth(this.header.getFormattedText(), width - 50);
-        List<String> list2 = this.mc.fontRendererObj.listFormattedStringToWidth(this.footer.getFormattedText(), width - 50);
-        int top = (int) args.get(1) - (list1.size() * 10);
+        int top = args.get(1);
+        int bottom = (int) args.get(3) - top;
+        if(header != null) {
+            List<String> list1 = this.mc.fontRendererObj.listFormattedStringToWidth(this.header.getFormattedText(), width - 50);
+            top -= (list1.size() * 10);
+        }
+        if(footer != null) {
+            List<String> list2 = this.mc.fontRendererObj.listFormattedStringToWidth(this.footer.getFormattedText(), width - 50);
+            bottom += (list2.size() * 9);
+        }
         args.set(1, top);
-        int bottom = ((int) args.get(3) + (list2.size() * 9)) - top;
         if (TabulousConfig.animations) {
             args.set(3, top + (int) (percentComplete * bottom));
         } else args.set(3, top + bottom);
     }
+/*          don't worry about this wyvest, just a prototype
+@ModifyVariable(method = "renderPlayerlist", at = @At(value = "LOAD", ordinal = 0), index = 17)
+    public List<String> renderBoxHereInstead(List<String> list1) {
+        int color = TabulousConfig.tabColor.getRGB();
+        int left = width / 2 - l1 / 2 - 1;
+        int top = k1 - 1;
+        int right = width / 2 + l1 / 2 + 1;
+        int bottom = k1 + i4 * 9;
+        int currentBottom;
+        List<String> list2;
+        if (header != null) {
+            top = top - (list1.size() * 10);
+        }
+        if (footer != null) {
+            list2 = this.mc.fontRendererObj.listFormattedStringToWidth(this.footer.getFormattedText(), width - 50);
+            bottom = (bottom + (list2.size() * 9)) - top;
+        } else bottom = bottom - top;
+        if (TabulousConfig.animations) {
+            currentBottom = top + (int) (percentComplete * bottom);
+        } else currentBottom = top + bottom;
+        Gui.drawRect(left, top, right, currentBottom, color);
+        return list1;
+    }
+@ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE"), ordinal = 4)
+    public int getI4(int i4) {
+        this.i4 = i4;
+        return i4;
+    }
+
+    @ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE"), ordinal = 10)
+    public int getL1(int l1) {
+        this.l1 = l1;
+        return l1;
+    }
+
+    @ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE"), ordinal = 9)
+    public int getK1(int k1) {
+        this.k1 = k1;
+        return k1;
+    }
+ */
 
 
     @Inject(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiPlayerTabOverlay;drawRect(IIIII)V", ordinal = 1, shift = At.Shift.AFTER), cancellable = true)
@@ -220,10 +267,6 @@ public abstract class GuiPlayerTabOverlayMixin {
     private void modifyFooter() {
         if (!TabulousConfig.footerText.equals("default")) {
             footer = new ChatComponentText(TabulousConfig.footerText);
-            return;
-        } else if (footer.getFormattedText().equals(TabulousConfig.footerText)) {
-            footer = null;
-            return;
         }
         if (!TabulousConfig.showFooter) {
             footer = null;
@@ -233,10 +276,6 @@ public abstract class GuiPlayerTabOverlayMixin {
     private void modifyHeader() {
         if (!TabulousConfig.headerText.equals("default")) {
             header = new ChatComponentText(TabulousConfig.headerText);
-            return;
-        } else if (footer.getFormattedText().equals(TabulousConfig.headerText)) {
-            header = null;
-            return;
         }
         if (!TabulousConfig.showHeader) {
             header = null;
