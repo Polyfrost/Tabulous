@@ -1,16 +1,20 @@
 package com.nxtdelivery.tabulous.mixin;
 
 
+import com.nxtdelivery.tabulous.Tabulous;
 import com.nxtdelivery.tabulous.config.TabulousConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiPlayerTabOverlay;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.client.GuiIngameForge;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,7 +26,7 @@ import org.spongepowered.asm.mixin.throwables.MixinException;
 
 import java.util.List;
 
-@Mixin(GuiPlayerTabOverlay.class)
+@Mixin(value = GuiPlayerTabOverlay.class, priority = Integer.MIN_VALUE)
 public abstract class GuiPlayerTabOverlayMixin {
     private float percentComplete = 0f;
     private boolean retract = false;
@@ -113,6 +117,9 @@ public abstract class GuiPlayerTabOverlayMixin {
     public void cancelUntilReady(CallbackInfo ci) {
         if (TabulousConfig.animations) {
             if (percentComplete < 0.9f) {
+                if (Tabulous.isTabHeightAllow() && BossStatus.bossName != null && BossStatus.statusBarTime > 0 && GuiIngameForge.renderBossHealth) {
+                    GlStateManager.popMatrix();
+                }
                 ci.cancel();
             }
         }
@@ -191,6 +198,9 @@ public abstract class GuiPlayerTabOverlayMixin {
     @Inject(method = "renderPlayerlist", at = @At("HEAD"), cancellable = true)
     public void renderPlayerlist(int width, Scoreboard scoreboardIn, ScoreObjective scoreObjectiveIn, CallbackInfo ci) {
         if (TabulousConfig.disabled) {
+            if (Tabulous.isTabHeightAllow() && BossStatus.bossName != null && BossStatus.statusBarTime > 0 && GuiIngameForge.renderBossHealth) {
+                GlStateManager.popMatrix();
+            }
             ci.cancel();
         }
         percentComplete = clamp(easeOut(percentComplete, retract ? 0f : 1f));
