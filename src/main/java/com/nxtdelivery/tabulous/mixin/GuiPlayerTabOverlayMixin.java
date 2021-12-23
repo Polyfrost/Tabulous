@@ -112,6 +112,8 @@ public abstract class GuiPlayerTabOverlayMixin {
             List<String> list2 = this.mc.fontRendererObj.listFormattedStringToWidth(this.footer.getFormattedText(), width - 50);
             bottom += (list2.size() * 10);
         }
+        args.set(0, (int) args.get(0) - TabulousConfig.marginFix);
+        args.set(2, (int) args.get(2) + TabulousConfig.marginFix);
         bottom = bottom - top;
         args.set(1, top);
         if (TabulousConfig.animations) {

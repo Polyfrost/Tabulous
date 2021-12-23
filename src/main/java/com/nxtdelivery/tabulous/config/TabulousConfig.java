@@ -85,6 +85,14 @@ public class TabulousConfig extends Vigilant {
     public static boolean renderScoreboardValues = true;
 
     @Property(
+            type = PropertyType.SLIDER,
+            name = "Fix Margins",
+            description = "Fix the margins on the side of the tab menu.\nSet to 5 to be in line with the margins on the rest of the menu.",
+            category = "Tab", subcategory = "General", max = 10
+    )
+    public static int marginFix = 0;
+
+    @Property(
             type = PropertyType.SWITCH,
             name = "Don't Show Heads",
             description = "Don't show the head of the player in the tab menu.",
