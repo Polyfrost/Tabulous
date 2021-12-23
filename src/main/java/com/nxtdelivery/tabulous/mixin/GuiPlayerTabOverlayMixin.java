@@ -103,15 +103,16 @@ public abstract class GuiPlayerTabOverlayMixin {
     public void redrawRect(Args args) {
         args.set(4, TabulousConfig.tabColor.getRGB());
         int top = args.get(1);
-        int bottom = (int) args.get(3) - top;
+        int bottom = args.get(3);
         if(header != null) {
             List<String> list1 = this.mc.fontRendererObj.listFormattedStringToWidth(this.header.getFormattedText(), width - 50);
             top -= (list1.size() * 10);
         }
         if(footer != null) {
             List<String> list2 = this.mc.fontRendererObj.listFormattedStringToWidth(this.footer.getFormattedText(), width - 50);
-            bottom += (list2.size() * 9);
+            bottom += (list2.size() * 10);
         }
+        bottom = bottom - top;
         args.set(1, top);
         if (TabulousConfig.animations) {
             args.set(3, top + (int) (percentComplete * bottom));
