@@ -62,7 +62,7 @@ public class TabulousConfig extends Vigilant {
     @Property(
             type = PropertyType.SLIDER,
             name = "Top Position",
-            description = "Position of the top of the tab menu. (default: 10)\nSet it to 0 to be seamless with the top of the screen. \u00a7eDoesn't currently work!",
+            description = "Position of the top of the tab menu. (default: 10)\nSet it to 0 to be seamless with the top of the screen.",
             category = "Tab", subcategory = "General", max = 20
     )
     public static int topPosition = 10;
@@ -215,7 +215,7 @@ public class TabulousConfig extends Vigilant {
     }
 
     public TabulousConfig() {
-        super(new File(Tabulous.modDir, Tabulous.ID + ".toml"), Tabulous.NAME);
+        super(new File(Tabulous.modDir, Tabulous.ID + ".toml"), Tabulous.NAME + " v" + Tabulous.VER);
         initialize();
 
         // of course vigilance only supports booleans as dependencies..

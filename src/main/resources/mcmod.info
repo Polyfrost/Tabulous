@@ -2,15 +2,15 @@
   {
     "modid": "${id}",
     "name": "${name}",
-    "description": "An example template",
+    "description": "A fully customizable, lightweight tab mod, which doesn't overwrite the rendering system of Minecraft.",
     "version": "${version}",
     "mcversion": "${mcversion}",
-    "url": "",
-    "updateUrl": "",
+    "url": "https://github.com/W-OVERFLOW/Tabulous",
+    "updateUrl": "https://github.com/W-OVERFLOW/Tabulous/releases",
     "authorList": [
-      "W-OVERFLOW"
+      "W-OVERFLOW", "nxtdaydelivery"
     ],
-    "credits": "",
+    "credits": "W-OVERFLOW",
     "logoFile": "",
     "screenshots": [],
     "dependencies": []

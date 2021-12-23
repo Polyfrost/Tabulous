@@ -60,11 +60,6 @@ public abstract class GuiPlayerTabOverlayMixin {
     }
 
 
-    public void renderPing(int a, int b, int c, NetworkPlayerInfo playerInfo) {
-        drawPing(a, b, c, playerInfo);
-    }
-
-
     @ModifyArg(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;getStringWidth(Ljava/lang/String;)I", ordinal = 0))
     public String getPlayerName(String args) {
         playerName = args;
@@ -98,10 +93,9 @@ public abstract class GuiPlayerTabOverlayMixin {
         return k;
     }
 
-    @ModifyVariable(method = "renderPlayerlist", at = @At("STORE"), ordinal = 9)
+    @ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE", ordinal = 0), ordinal = 9)
     public int setTop(int top) {
-        //return TabulousConfig.topPosition;        // TODO fix
-        return top;
+        return TabulousConfig.topPosition;
     }
 
     @ModifyVariable(method = "renderPlayerlist", at = @At("STORE"))
@@ -138,6 +132,7 @@ public abstract class GuiPlayerTabOverlayMixin {
             args.set(3, top + (int) (percentComplete * bottom));
         } else args.set(3, top + bottom);
     }
+
 
     @Inject(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiPlayerTabOverlay;drawRect(IIIII)V", ordinal = 1, shift = At.Shift.AFTER), cancellable = true)
     public void cancelUntilReady(CallbackInfo ci) {
@@ -230,14 +225,14 @@ public abstract class GuiPlayerTabOverlayMixin {
         }
         if (TabulousConfig.renderPing && TabulousConfig.headPos != 1) {
             p_175245_1_ += 8;
-            renderPing(p_175245_1_, p_175245_2_ - (shouldRenderHeads ? 9 : 0), p_175245_3_, networkPlayerInfoIn);
+            drawPing(p_175245_1_, p_175245_2_ - (shouldRenderHeads ? 9 : 0), p_175245_3_, networkPlayerInfoIn);
         }
     }
 
     @Inject(method = "renderPlayerlist", at = @At("HEAD"), cancellable = true)
     public void renderPlayerlist(int width, Scoreboard scoreboardIn, ScoreObjective scoreObjectiveIn, CallbackInfo ci) {
         if (TabulousConfig.modEnabled) {
-            if(TabulousConfig.disabled) {
+            if (TabulousConfig.disabled) {
                 ci.cancel();
             }
             percentComplete = clamp(easeOut(percentComplete, retract ? 0f : 1f));
