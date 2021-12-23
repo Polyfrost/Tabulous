@@ -147,10 +147,10 @@ public abstract class GuiPlayerTabOverlayMixin {
     public int cancelHeadUntilReady(FontRenderer instance, String text, float x, float y, int color) {
         if (TabulousConfig.animations) {
             if (percentComplete > 0.9f) {
-                instance.drawStringWithShadow(text, x, y, color);
+                drawString(instance, text, x, y, color);
             }
         } else {
-            instance.drawStringWithShadow(text, x, y, color);
+            drawString(instance, text, x, y, color);
         }
         return 0;
     }
@@ -179,6 +179,16 @@ public abstract class GuiPlayerTabOverlayMixin {
         if (TabulousConfig.headPos == 1) {
             args.set(1, (float) args.get(1) - 8f);
         }
+    }
+
+    @Redirect(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawStringWithShadow(Ljava/lang/String;FFI)I"))
+    public int drawString(FontRenderer instance, String text, float x, float y, int color) {
+        if (TabulousConfig.textShadow) {
+            instance.drawStringWithShadow(text, x, y, color);
+        } else {
+            instance.drawString(text, (int) x, (int) y, color);
+        }
+        return 0;
     }
 
     @ModifyArgs(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;drawScaledCustomSizeModalRect(IIFFIIIIFF)V", ordinal = 0))
@@ -228,6 +238,7 @@ public abstract class GuiPlayerTabOverlayMixin {
             drawPing(p_175245_1_, p_175245_2_ - (shouldRenderHeads ? 9 : 0), p_175245_3_, networkPlayerInfoIn);
         }
     }
+
 
     @Inject(method = "renderPlayerlist", at = @At("HEAD"), cancellable = true)
     public void renderPlayerlist(int width, Scoreboard scoreboardIn, ScoreObjective scoreObjectiveIn, CallbackInfo ci) {

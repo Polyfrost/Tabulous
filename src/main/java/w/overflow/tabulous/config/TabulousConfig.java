@@ -68,6 +68,13 @@ public class TabulousConfig extends Vigilant {
     public static int topPosition = 10;
     @Property(
             type = PropertyType.SWITCH,
+            name = "Text Shadow",
+            description = "Render the text with a shadow on the tab menu.",
+            category = "Tab", subcategory = "General"
+    )
+    public static boolean textShadow = true;
+    @Property(
+            type = PropertyType.SWITCH,
             name = "Show Ping",
             description = "Show the ping values on the tab menu.",
             category = "Tab", subcategory = "Ping"
@@ -174,7 +181,7 @@ public class TabulousConfig extends Vigilant {
             description = "Color for the entries of people in tab. (Background color beneath the names)",
             category = "Tabulous Customization", subcategory = "Colors"
     )
-    public static Color tabItemColor = new Color(50, 50, 50, 170);
+    public static Color tabItemColor = new Color(50, 50, 50, 150);
 
     @Property(
             type = PropertyType.BUTTON,
@@ -183,7 +190,7 @@ public class TabulousConfig extends Vigilant {
             category = "Tabulous Customization", placeholder = "Reset"
     )
     public void resetColors() {
-        tabItemColor = new Color(50, 50, 50, 170);
+        tabItemColor = new Color(50, 50, 50, 150);
         tabColor = new Color(50, 50, 50, 100);
         myNameText = "default";
         headerText = "default";
