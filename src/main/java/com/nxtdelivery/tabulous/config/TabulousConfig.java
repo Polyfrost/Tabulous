@@ -148,7 +148,7 @@ public class TabulousConfig extends Vigilant {
             description = "Color for the entries of people in tab. (Background color beneath the names)",
             category = "Tabulous Customization", subcategory = "Colors"
     )
-    public static Color tabItemColor = new Color(255, 255, 255, 100);
+    public static Color tabItemColor = new Color(255, 255, 255, 32);
 
     @Property(
             type = PropertyType.SWITCH,
