@@ -4,8 +4,7 @@
   "package": "com.nxtdelivery.tabulous.mixin",
   "refmap": "mixins.${id}.refmap.json",
   "mixins": [
-    "GuiPlayerTabOverlayMixin",
-    "GuiMixin"
+    "GuiPlayerTabOverlayMixin"
   ],
   "verbose": true
 }
