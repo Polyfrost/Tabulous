@@ -237,7 +237,7 @@ public abstract class GuiPlayerTabOverlayMixin {
     @Redirect(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiPlayerTabOverlay;drawPing(IIILnet/minecraft/client/network/NetworkPlayerInfo;)V"))
     public void renderPing(GuiPlayerTabOverlay instance, int p_175245_1_, int p_175245_2_, int p_175245_3_, NetworkPlayerInfo networkPlayerInfoIn) {
         if (TabulousConfig.renderPing && TabulousConfig.headPos != 1) {
-            p_175245_1_ += 8;
+            if(shouldRenderHeads) p_175245_1_ += 8;
             drawPing(p_175245_1_, p_175245_2_ - (shouldRenderHeads ? 9 : 0), p_175245_3_, networkPlayerInfoIn);
         }
     }
