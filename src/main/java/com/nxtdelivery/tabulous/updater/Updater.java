@@ -1,4 +1,4 @@
-package w.overflow.tabulous.updater;
+package com.nxtdelivery.tabulous.updater;
 
 import com.google.gson.JsonObject;
 import gg.essential.api.EssentialAPI;
@@ -9,8 +9,8 @@ import kotlin.Unit;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import org.apache.commons.lang3.StringUtils;
-import w.overflow.tabulous.Tabulous;
-import w.overflow.tabulous.config.TabulousConfig;
+import com.nxtdelivery.tabulous.Tabulous;
+import com.nxtdelivery.tabulous.config.TabulousConfig;
 
 import java.io.File;
 import java.io.IOException;

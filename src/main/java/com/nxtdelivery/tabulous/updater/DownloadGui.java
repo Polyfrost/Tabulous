@@ -1,11 +1,11 @@
-package w.overflow.tabulous.updater;
+package com.nxtdelivery.tabulous.updater;
 
 import gg.essential.api.EssentialAPI;
 import gg.essential.api.gui.ConfirmationModalBuilder;
 import gg.essential.api.utils.Multithreading;
 import gg.essential.elementa.WindowScreen;
 import kotlin.Unit;
-import w.overflow.tabulous.Tabulous;
+import com.nxtdelivery.tabulous.Tabulous;
 
 import java.io.File;
 

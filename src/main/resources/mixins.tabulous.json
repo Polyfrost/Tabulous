@@ -1,10 +1,11 @@
 {
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.7",
-  "package": "w.overflow.tabulous.mixin",
+  "package": "com.nxtdelivery.tabulous.mixin",
   "refmap": "mixins.${id}.refmap.json",
   "mixins": [
-    "GuiPlayerTabOverlayMixin"
+    "GuiPlayerTabOverlayMixin",
+    "GuiMixin"
   ],
   "verbose": true
 }

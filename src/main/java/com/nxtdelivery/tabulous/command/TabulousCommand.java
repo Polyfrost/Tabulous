@@ -1,9 +1,9 @@
-package w.overflow.tabulous.command;
+package com.nxtdelivery.tabulous.command;
 
 import gg.essential.api.EssentialAPI;
 import gg.essential.api.commands.Command;
 import gg.essential.api.commands.DefaultHandler;
-import w.overflow.tabulous.Tabulous;
+import com.nxtdelivery.tabulous.Tabulous;
 
 public class TabulousCommand extends Command {
     public TabulousCommand() {

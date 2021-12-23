@@ -7,11 +7,11 @@ plugins {
 }
 
 version = mod_version
-group = "com.example"
+group = "com.nxtdelivery"
 archivesBaseName = mod_name
 
 blossom {
-    String className = "src/main/java/w/overflow/tabulous/Tabulous.java"
+    String className = "src/main/java/com/nxtdelivery/tabulous/Tabulous.java"
     replaceToken("@VER@", project.version, className)
     replaceToken("@NAME@", mod_name, className)
     replaceToken("@ID@", mod_id, className)

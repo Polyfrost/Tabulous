@@ -1,13 +1,13 @@
-package w.overflow.tabulous;
+package com.nxtdelivery.tabulous;
 
+import com.nxtdelivery.tabulous.command.TabulousCommand;
+import com.nxtdelivery.tabulous.config.TabulousConfig;
+import com.nxtdelivery.tabulous.updater.Updater;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import w.overflow.tabulous.command.TabulousCommand;
-import w.overflow.tabulous.config.TabulousConfig;
-import w.overflow.tabulous.updater.Updater;
 
 import java.io.File;
 
