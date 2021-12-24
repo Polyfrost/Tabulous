@@ -88,9 +88,16 @@ public class TabulousConfig extends Vigilant {
             type = PropertyType.SLIDER,
             name = "Fix Margins",
             description = "Fix the margins on the side of the tab menu.\nSet to 5 to be in line with the margins on the rest of the menu.",
-            category = "Tab", subcategory = "General", max = 10
+            category = "Tab", subcategory = "Margins", max = 10
     )
     public static int marginFix = 0;
+    @Property(
+            type = PropertyType.SWITCH,
+            name = "Don't Render Bossbar",
+            description = "Disable rendering of the bossbar while the tab menu is open.",
+            category = "Tab", subcategory = "General"
+    )
+    public static boolean cancelBossbar = false;
 
     @Property(
             type = PropertyType.SWITCH,

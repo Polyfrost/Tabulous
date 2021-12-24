@@ -34,6 +34,7 @@ public abstract class GuiPlayerTabOverlayMixin {
     private int rowRight = 0;
     private boolean shouldRenderHeads = true;
     private int width = 0;
+    private List<String> headerList = null;
 
     @Final
     @Shadow
@@ -62,7 +63,7 @@ public abstract class GuiPlayerTabOverlayMixin {
         return args;
     }
 
-    @ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE"), ordinal = 3)
+    @ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE", ordinal = 0), ordinal = 3)
     private int changeWidth(int k) {
         int newThing;
         if (playerName.contains(mc.getSession().getUsername())) {
@@ -98,6 +99,10 @@ public abstract class GuiPlayerTabOverlayMixin {
     public void cancelFooterRect(int i, int i1, int i2, int i3, int i4) {
 
     }
+    @Redirect(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawStringWithShadow(Ljava/lang/String;FFI)I", ordinal = 0))
+    public int cancelOldHeader(FontRenderer instance, String text, float x, float y, int color) {
+        return 0;
+    }
 
     @ModifyArgs(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiPlayerTabOverlay;drawRect(IIIII)V", ordinal = 1))
     public void redrawRect(Args args) {
@@ -105,8 +110,8 @@ public abstract class GuiPlayerTabOverlayMixin {
         int top = args.get(1);
         int bottom = args.get(3);
         if(header != null) {
-            List<String> list1 = this.mc.fontRendererObj.listFormattedStringToWidth(this.header.getFormattedText(), width - 50);
-            top -= (list1.size() * 10);
+            headerList = this.mc.fontRendererObj.listFormattedStringToWidth(this.header.getFormattedText(), width - 50);
+            top -= (headerList.size() * 10);
         }
         if(footer != null) {
             List<String> list2 = this.mc.fontRendererObj.listFormattedStringToWidth(this.footer.getFormattedText(), width - 50);
@@ -120,71 +125,37 @@ public abstract class GuiPlayerTabOverlayMixin {
             args.set(3, top + (int) (percentComplete * bottom));
         } else args.set(3, top + bottom);
     }
-/*          don't worry about this wyvest, just a prototype
-@ModifyVariable(method = "renderPlayerlist", at = @At(value = "LOAD", ordinal = 0), index = 17)
-    public List<String> renderBoxHereInstead(List<String> list1) {
-        int color = TabulousConfig.tabColor.getRGB();
-        int left = width / 2 - l1 / 2 - 1;
-        int top = k1 - 1;
-        int right = width / 2 + l1 / 2 + 1;
-        int bottom = k1 + i4 * 9;
-        int currentBottom;
-        List<String> list2;
-        if (header != null) {
-            top = top - (list1.size() * 10);
-        }
-        if (footer != null) {
-            list2 = this.mc.fontRendererObj.listFormattedStringToWidth(this.footer.getFormattedText(), width - 50);
-            bottom = (bottom + (list2.size() * 9)) - top;
-        } else bottom = bottom - top;
-        if (TabulousConfig.animations) {
-            currentBottom = top + (int) (percentComplete * bottom);
-        } else currentBottom = top + bottom;
-        Gui.drawRect(left, top, right, currentBottom, color);
-        return list1;
-    }
-@ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE"), ordinal = 4)
-    public int getI4(int i4) {
-        this.i4 = i4;
-        return i4;
-    }
 
-    @ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE"), ordinal = 10)
-    public int getL1(int l1) {
-        this.l1 = l1;
-        return l1;
-    }
-
-    @ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE"), ordinal = 9)
-    public int getK1(int k1) {
-        this.k1 = k1;
-        return k1;
-    }
- */
 
 
     @Inject(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiPlayerTabOverlay;drawRect(IIIII)V", ordinal = 1, shift = At.Shift.AFTER), cancellable = true)
-    public void cancelUntilReady(CallbackInfo ci) {
+    public void cancelUntilReadyAndReRenderHeader(CallbackInfo ci) {
         if (TabulousConfig.animations) {
             if (percentComplete < 0.9f) {
                 if (Tabulous.isTabHeightAllow() && BossStatus.bossName != null && BossStatus.statusBarTime > 0 && GuiIngameForge.renderBossHealth) {
                     GlStateManager.popMatrix();
                 }
                 ci.cancel();
-            }
-        }
-    }
-
-    @Redirect(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawStringWithShadow(Ljava/lang/String;FFI)I", ordinal = 0))
-    public int cancelHeadUntilReady(FontRenderer instance, String text, float x, float y, int color) {
-        if (TabulousConfig.animations) {
-            if (percentComplete > 0.9f) {
-                drawString(instance, text, x, y, color);
+            } else {
+                if(headerList != null) {
+                    int top2 = TabulousConfig.topPosition;
+                    for(String s : headerList) {
+                        int strWidth = this.mc.fontRendererObj.getStringWidth(s);
+                        this.mc.fontRendererObj.drawStringWithShadow(s, (float)(this.width / 2 - strWidth / 2), (float)top2, -1);
+                        top2 += 10;
+                    }
+                }
             }
         } else {
-            drawString(instance, text, x, y, color);
+            if(headerList != null) {
+                int top2 = TabulousConfig.topPosition;
+                for(String s : headerList) {
+                    int strWidth = this.mc.fontRendererObj.getStringWidth(s);
+                    this.mc.fontRendererObj.drawStringWithShadow(s, (float)(this.width / 2 - strWidth / 2), (float)top2, -1);
+                    top2 += 10;
+                }
+            }
         }
-        return 0;
     }
 
     @Redirect(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiPlayerTabOverlay;drawScoreboardValues(Lnet/minecraft/scoreboard/ScoreObjective;ILjava/lang/String;IILnet/minecraft/client/network/NetworkPlayerInfo;)V", ordinal = 0))
@@ -233,13 +204,18 @@ public abstract class GuiPlayerTabOverlayMixin {
     @ModifyArgs(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiPlayerTabOverlay;drawRect(IIIII)V", ordinal = 2))
     public void setColor(Args args) {
         rowRight = args.get(2);
+        //int left = ((int) args.get(0) / 5) * TabulousConfig.marginInternal;       TODO something like this ig
+        //int i1 = (int) args.get(2) - (int) args.get(0);
+        //int right = left + i1;
+        //args.set(0,left);
+        //args.set(2,right);
         args.set(4, TabulousConfig.tabItemColor.getRGB());
     }
 
     @Redirect(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiPlayerTabOverlay;drawPing(IIILnet/minecraft/client/network/NetworkPlayerInfo;)V"))
     public void renderPing(GuiPlayerTabOverlay instance, int p_175245_1_, int p_175245_2_, int p_175245_3_, NetworkPlayerInfo networkPlayerInfoIn) {
         if (TabulousConfig.renderPing && TabulousConfig.headPos != 1) {
-            if(shouldRenderHeads) p_175245_1_ += 8;
+            if(shouldRenderHeads) p_175245_1_ += 9;
             drawPing(p_175245_1_, p_175245_2_ - (shouldRenderHeads ? 9 : 0), p_175245_3_, networkPlayerInfoIn);
         }
     }
