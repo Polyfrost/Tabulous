@@ -150,6 +150,13 @@ public class TabulousConfig extends Vigilant {
     public static String myNameText = "default";
 
     @Property(
+            type = PropertyType.SWITCH, name = "Hide Custom Name Ingame",
+            description = "Hide your custom name in game, so you look like everyone else.",
+            category = "Tabulous Customization", subcategory = "Custom Text"
+    )
+    public static boolean hideCustomNameIngame = false;
+
+    @Property(
             type = PropertyType.COLOR,
             name = "Tab Color",
             description = "Color for the tab menu.",
@@ -164,6 +171,48 @@ public class TabulousConfig extends Vigilant {
             category = "Tabulous Customization", subcategory = "Colors"
     )
     public static Color tabItemColor = new Color(255, 255, 255, 32);
+
+
+    @Property(
+            type = PropertyType.SWITCH, name = "Hide Guild Tags in Tab",
+            description = "Prevent Guild tags from showing up in tab.",
+            category = "Hypixel", subcategory = "Players"
+    )
+    public static boolean hideGuilds = false;
+
+    @Property(
+            type = PropertyType.SWITCH, name = "Hide Player Ranks in Tab",
+            description = "Prevent player ranks from showing up in tab.",
+            category = "Hypixel", subcategory = "Players"
+    )
+    public static boolean hidePlayerRanksInTab = false;
+
+    @Property(
+            type = PropertyType.SWITCH,
+            name = "Force Hide NPCs",
+            description = "Force hide NPCs in the tab menu.",
+            category = "Hypixel", subcategory = "NPCs"
+    )
+    public static boolean hideNPCs = true;
+
+    @Property(
+            type = PropertyType.SWITCH, name = "Cleaner Tab in SkyBlock",
+            description = "Don't render ping for tab entries in SkyBlock.",
+            category = "Hypixel", subcategory = "SkyBlock"
+    )
+    public static boolean cleanerSkyBlockTabInfo = true;
+
+    @Property(
+            type = PropertyType.SWITCH, name = "Hide Ping Ingame",
+            description = "Prevent ping from showing up in tab while playing games, since the value is misleading. Ping will remain visible in lobbies.",
+            category = "Hypixel", subcategory = "Players"
+    )
+    public static boolean hidePingInGame = true;
+
+
+
+
+
 
     @Property(
             type = PropertyType.SWITCH,
