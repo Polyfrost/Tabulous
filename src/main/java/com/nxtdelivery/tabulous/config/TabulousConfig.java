@@ -1,8 +1,8 @@
 package com.nxtdelivery.tabulous.config;
 
 import com.nxtdelivery.tabulous.Tabulous;
-import com.nxtdelivery.tabulous.updater.DownloadGui;
-import com.nxtdelivery.tabulous.updater.Updater;
+import com.nxtdelivery.tabulous.util.DownloadGui;
+import com.nxtdelivery.tabulous.util.Updater;
 import gg.essential.api.EssentialAPI;
 import gg.essential.vigilance.Vigilant;
 import gg.essential.vigilance.data.Property;
@@ -51,6 +51,14 @@ public class TabulousConfig extends Vigilant {
             category = "Tab", subcategory = "Headers/Footers"
     )
     public static boolean showFooter = true;
+
+    @Property(
+            type = PropertyType.SWITCH,
+            name = "Show Self At Top",
+            description = "Always show your name at the top of the list.",
+            category = "Tab", subcategory = "General"
+    )
+    public static boolean alwaysAtTop = false;
 
     @Property(
             type = PropertyType.SLIDER,
@@ -151,7 +159,7 @@ public class TabulousConfig extends Vigilant {
 
     @Property(
             type = PropertyType.SWITCH, name = "Hide Custom Name Ingame",
-            description = "Hide your custom name in game, so you look like everyone else.",
+            description = "Only show your custom name in lobbies and hide your custom name in game, so you look like everyone else.",
             category = "Tabulous Customization", subcategory = "Custom Text"
     )
     public static boolean hideCustomNameIngame = false;
@@ -197,21 +205,29 @@ public class TabulousConfig extends Vigilant {
 
     @Property(
             type = PropertyType.SWITCH, name = "Cleaner Tab in SkyBlock",
-            description = "Don't render ping for tab entries in SkyBlock.",
+            description = "Don't render ping or player heads for tab entries in SkyBlock.",
             category = "Hypixel", subcategory = "SkyBlock"
     )
     public static boolean cleanerSkyBlockTabInfo = true;
+    @Property(
+            type = PropertyType.SWITCH, name = "Default Tab in SkyBlock",
+            description = "Set the tab menu to be like all the other tab menus in SkyBlock.",
+            category = "Hypixel", subcategory = "SkyBlock"
+    )
+    public static boolean defaultSkyBlockTab = false;
 
     @Property(
             type = PropertyType.SWITCH, name = "Hide Ping Ingame",
             description = "Prevent ping from showing up in tab while playing games, since the value is misleading. Ping will remain visible in lobbies.",
-            category = "Hypixel", subcategory = "Players"
+            category = "Tab", subcategory = "Ping"
     )
     public static boolean hidePingInGame = true;
-
-
-
-
+    @Property(
+            type = PropertyType.SWITCH, name = "Hide Invalid Names",
+            description = "Hide any name which is not a valid Minecraft username.\nBasically disables custom scoreboards.",
+            category = "Tab", subcategory = "General"
+    )
+    public static boolean hideInvalidNames = false;
 
 
     @Property(

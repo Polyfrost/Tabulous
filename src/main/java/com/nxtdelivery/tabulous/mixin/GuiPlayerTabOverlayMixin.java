@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import org.spongepowered.asm.mixin.throwables.MixinException;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Mixin(value = GuiPlayerTabOverlay.class, priority = Integer.MIN_VALUE)
 public abstract class GuiPlayerTabOverlayMixin {
@@ -37,6 +38,9 @@ public abstract class GuiPlayerTabOverlayMixin {
     private int width = 0;
     private List<String> headerList = null;
     private boolean inGame = false;
+    private static final Pattern validMinecraftUsername = Pattern.compile("\\w{1,16}");
+    private static final Pattern skyblockNameRegex = Pattern.compile("![A-D]-[a-v]");
+    private NetworkPlayerInfo currentInfo;
 
     @Final
     @Shadow
@@ -64,10 +68,31 @@ public abstract class GuiPlayerTabOverlayMixin {
     }
 
     @ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE"))
-    public List<NetworkPlayerInfo> removeNPCs(List<NetworkPlayerInfo> list) {
+    public List<NetworkPlayerInfo> removeTabEntries(List<NetworkPlayerInfo> list) {
+        if (TabulousConfig.alwaysAtTop && !Tabulous.isSkyblock) {
+            for (NetworkPlayerInfo info : list) {
+                if (info.getGameProfile().getName().equals(mc.getSession().getUsername())) {
+                    list.remove(info);
+                    list.add(0, info);
+                    break;
+                }
+            }
+        }
         if (TabulousConfig.hideNPCs && EssentialAPI.getMinecraftUtil().isHypixel()) {
             try {
                 list.removeIf(info -> getPlayerName(info).startsWith("\u00A78[NPC]") || !getPlayerName(info).startsWith("\u00A7"));
+            } catch (Exception ignored) {
+            }
+        }
+        if (TabulousConfig.hideInvalidNames || (TabulousConfig.defaultSkyBlockTab && Tabulous.isSkyblock)) {
+            try {
+                list.removeIf(info -> !validMinecraftUsername.matcher(info.getGameProfile().getName()).matches());
+            } catch (Exception ignored) {
+            }
+        }
+        if (TabulousConfig.defaultSkyBlockTab) {
+            try {
+                list.removeIf(info -> skyblockNameRegex.matcher(getPlayerName(info)).matches());
             } catch (Exception ignored) {
             }
         }
@@ -116,6 +141,7 @@ public abstract class GuiPlayerTabOverlayMixin {
     public void cancelFooterRect(int i, int i1, int i2, int i3, int i4) {
 
     }
+
     @Redirect(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawStringWithShadow(Ljava/lang/String;FFI)I", ordinal = 0))
     public int cancelOldHeader(FontRenderer instance, String text, float x, float y, int color) {
         return 0;
@@ -126,11 +152,11 @@ public abstract class GuiPlayerTabOverlayMixin {
         args.set(4, TabulousConfig.tabColor.getRGB());
         int top = args.get(1);
         int bottom = args.get(3);
-        if(header != null) {
+        if (header != null) {
             headerList = this.mc.fontRendererObj.listFormattedStringToWidth(this.header.getFormattedText(), width - 50);
             top -= (headerList.size() * 10);
         }
-        if(footer != null) {
+        if (footer != null) {
             List<String> list2 = this.mc.fontRendererObj.listFormattedStringToWidth(this.footer.getFormattedText(), width - 50);
             bottom += (list2.size() * 10);
         }
@@ -144,7 +170,6 @@ public abstract class GuiPlayerTabOverlayMixin {
     }
 
 
-
     @Inject(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiPlayerTabOverlay;drawRect(IIIII)V", ordinal = 1, shift = At.Shift.AFTER), cancellable = true)
     public void cancelUntilReadyAndReRenderHeader(CallbackInfo ci) {
         if (TabulousConfig.animations) {
@@ -154,21 +179,21 @@ public abstract class GuiPlayerTabOverlayMixin {
                 }
                 ci.cancel();
             } else {
-                if(headerList != null) {
+                if (headerList != null) {
                     int top2 = TabulousConfig.topPosition;
-                    for(String s : headerList) {
+                    for (String s : headerList) {
                         int strWidth = this.mc.fontRendererObj.getStringWidth(s);
-                        this.mc.fontRendererObj.drawStringWithShadow(s, (float)(this.width / 2 - strWidth / 2), (float)top2, -1);
+                        drawString(mc.fontRendererObj, s, (float) (this.width / 2 - strWidth / 2), (float) top2, -1);
                         top2 += 10;
                     }
                 }
             }
         } else {
-            if(headerList != null) {
+            if (headerList != null) {
                 int top2 = TabulousConfig.topPosition;
-                for(String s : headerList) {
+                for (String s : headerList) {
                     int strWidth = this.mc.fontRendererObj.getStringWidth(s);
-                    this.mc.fontRendererObj.drawStringWithShadow(s, (float)(this.width / 2 - strWidth / 2), (float)top2, -1);
+                    drawString(mc.fontRendererObj, s, (float) (this.width / 2 - strWidth / 2), (float) top2, -1);
                     top2 += 10;
                 }
             }
@@ -186,8 +211,8 @@ public abstract class GuiPlayerTabOverlayMixin {
     public void renderNames(Args args) {
         if (args.get(0).toString().contains(mc.getSession().getUsername())) {
             if (!TabulousConfig.myNameText.equals("default")) {
-                if(!TabulousConfig.hideCustomNameIngame) args.set(0, TabulousConfig.myNameText);
-                else if(!inGame) args.set(0, TabulousConfig.myNameText);
+                if (!TabulousConfig.hideCustomNameIngame) args.set(0, TabulousConfig.myNameText);
+                else if (!inGame) args.set(0, TabulousConfig.myNameText);
             }
         }
         if (TabulousConfig.hideGuilds && EssentialAPI.getMinecraftUtil().isHypixel()) {
@@ -214,10 +239,28 @@ public abstract class GuiPlayerTabOverlayMixin {
         return 0;
     }
 
+    @ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE"), ordinal = 0)
+    public NetworkPlayerInfo getPlayerInfo(NetworkPlayerInfo info) {
+        currentInfo = info;
+        return info;
+    }
+
     @ModifyArgs(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;drawScaledCustomSizeModalRect(IIFFIIIIFF)V", ordinal = 0))
     public void setPositionHead(Args args) {
         if (TabulousConfig.headPos == 1) {
             args.set(0, rowRight - 8);
+        }
+        if (TabulousConfig.cleanerSkyBlockTabInfo && EssentialAPI.getMinecraftUtil().isHypixel()) {
+            try {
+                if (Tabulous.isSkyblock) {
+                    if (skyblockNameRegex.matcher(currentInfo.getGameProfile().getName()).matches() &&
+                            !validMinecraftUsername.matcher(currentInfo.getDisplayName().getUnformattedText()).matches()) {
+                        args.set(0, -1000);         // shut up it works okay
+                        args.set(1, -1000);
+                    }
+                }
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -225,6 +268,18 @@ public abstract class GuiPlayerTabOverlayMixin {
     public void setPositionHat(Args args) {
         if (TabulousConfig.headPos == 1) {
             args.set(0, rowRight - 8);
+        }
+        if (TabulousConfig.cleanerSkyBlockTabInfo && EssentialAPI.getMinecraftUtil().isHypixel()) {
+            try {
+                if (Tabulous.isSkyblock) {
+                    if (skyblockNameRegex.matcher(currentInfo.getGameProfile().getName()).matches() &&
+                            !validMinecraftUsername.matcher(currentInfo.getDisplayName().getUnformattedText()).matches()) {
+                        args.set(0, -1000);
+                        args.set(1, -1000);
+                    }
+                }
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -242,9 +297,10 @@ public abstract class GuiPlayerTabOverlayMixin {
     @Redirect(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiPlayerTabOverlay;drawPing(IIILnet/minecraft/client/network/NetworkPlayerInfo;)V"))
     public void renderPing(GuiPlayerTabOverlay instance, int p_175245_1_, int p_175245_2_, int p_175245_3_, NetworkPlayerInfo networkPlayerInfoIn) {
         if (TabulousConfig.renderPing && TabulousConfig.headPos != 1) {
-            if(shouldRenderHeads) p_175245_1_ += 9;
+            if (shouldRenderHeads) p_175245_1_ += 9;
             inGame = networkPlayerInfoIn.getResponseTime() == 1;
-            if((TabulousConfig.hidePingInGame || TabulousConfig.cleanerSkyBlockTabInfo) && networkPlayerInfoIn.getResponseTime() != 1 && EssentialAPI.getMinecraftUtil().isHypixel()) drawPing(p_175245_1_, p_175245_2_ - (shouldRenderHeads ? 9 : 0), p_175245_3_, networkPlayerInfoIn);
+            if ((TabulousConfig.hidePingInGame || TabulousConfig.cleanerSkyBlockTabInfo) && networkPlayerInfoIn.getResponseTime() != 1 && EssentialAPI.getMinecraftUtil().isHypixel())
+                drawPing(p_175245_1_, p_175245_2_ - (shouldRenderHeads ? 9 : 0), p_175245_3_, networkPlayerInfoIn);
         }
     }
 
