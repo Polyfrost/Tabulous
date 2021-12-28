@@ -16,7 +16,6 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.GuiIngameForge;
-import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -80,7 +79,8 @@ public abstract class GuiPlayerTabOverlayMixin {
         }
         if (TabulousConfig.hideNPCs && EssentialAPI.getMinecraftUtil().isHypixel()) {
             try {
-                list.removeIf(info -> getPlayerName(info).startsWith("\u00A78[NPC]") || !getPlayerName(info).startsWith("\u00A7"));
+                list.removeIf(info -> getPlayerName(info).startsWith("\u00A78[NPC]") || getPlayerName(info).startsWith("\u00a7e[NPC]") || getPlayerName(info).startsWith("\u00a75[NPC]"));
+                if (!Tabulous.isTNT) list.removeIf(info -> !getPlayerName(info).startsWith("\u00a7"));
             } catch (Exception ignored) {
             }
         }
@@ -107,17 +107,17 @@ public abstract class GuiPlayerTabOverlayMixin {
 
     @ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE", ordinal = 0), ordinal = 3)
     private int changeWidth(int k) {
-        int newThing;
+        int strWidth;
         if (playerName.contains(mc.getSession().getUsername())) {
             if (!TabulousConfig.myNameText.equals("default")) {
-                newThing = mc.fontRendererObj.getStringWidth(TabulousConfig.myNameText);
+                strWidth = mc.fontRendererObj.getStringWidth(TabulousConfig.myNameText);
             } else {
-                newThing = k;
+                strWidth = k;
             }
         } else {
-            newThing = k;
+            strWidth = k;
         }
-        return newThing;
+        return strWidth;
     }
 
     @ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE", ordinal = 0), ordinal = 9)
@@ -211,13 +211,29 @@ public abstract class GuiPlayerTabOverlayMixin {
     public void renderNames(Args args) {
         if (args.get(0).toString().contains(mc.getSession().getUsername())) {
             if (!TabulousConfig.myNameText.equals("default")) {
-                if (!TabulousConfig.hideCustomNameIngame) args.set(0, TabulousConfig.myNameText);
+                if (inGame && !TabulousConfig.hideCustomNameIngame && Tabulous.isBedWars && TabulousConfig.customNameBW) {
+                    String name = TabulousConfig.myNameText;
+                    if (TabulousConfig.myNameText.startsWith("\u00a7")) {
+                        name = TabulousConfig.myNameText.substring(2);
+                    }
+                    if (name.startsWith("[")) {
+                        name = name.substring(name.indexOf("]") + 2);
+                    }
+                    if(!Character.isLetterOrDigit(args.get(0).toString().charAt(2))) {
+                        name = args.get(0).toString().substring(0, 10) + name;
+                        args.set(0, name);
+                    } else args.set(0,TabulousConfig.myNameText);
+                } else if (!TabulousConfig.hideCustomNameIngame) args.set(0, TabulousConfig.myNameText);
                 else if (!inGame) args.set(0, TabulousConfig.myNameText);
+
             }
         }
         if (TabulousConfig.hideGuilds && EssentialAPI.getMinecraftUtil().isHypixel()) {
-            if (args.get(0).toString().charAt(args.get(0).toString().length() - 1) == ']') {
-                args.set(0, args.get(0).toString().substring(0, args.get(0).toString().lastIndexOf("\u00A7")));
+            try {
+                if (args.get(0).toString().charAt(args.get(0).toString().length() - 1) == ']') {
+                    args.set(0, args.get(0).toString().substring(0, args.get(0).toString().lastIndexOf("\u00A7")));
+                }
+            } catch (Exception ignored) {
             }
         }
         if (TabulousConfig.hidePlayerRanksInTab && args.get(0).toString().startsWith("[", 2) && EssentialAPI.getMinecraftUtil().isHypixel()) {
@@ -314,10 +330,10 @@ public abstract class GuiPlayerTabOverlayMixin {
             ci.cancel();
         }
         percentComplete = clamp(easeOut(percentComplete, retract ? 0f : 1f));
-        if (retract && Keyboard.isKeyDown(mc.gameSettings.keyBindPlayerList.getKeyCode())) {
-            retract = false;
-            KeyBinding.setKeyBindState(mc.gameSettings.keyBindPlayerList.getKeyCode(), false);
-        }
+        //if (retract && Keyboard.isKeyDown(mc.gameSettings.keyBindPlayerList.getKeyCode())) {      // commented out because it caused issues
+        //    retract = false;
+        //    KeyBinding.setKeyBindState(mc.gameSettings.keyBindPlayerList.getKeyCode(), false);
+        //}
         if (retract && percentComplete == 0f) {
             retract = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindPlayerList.getKeyCode(), false);

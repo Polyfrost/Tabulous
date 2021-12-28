@@ -29,14 +29,6 @@ public class TabulousConfig extends Vigilant {
     public static boolean animations = true;
 
     @Property(
-            type = PropertyType.SELECTOR,
-            name = "Tab Location",
-            description = "Location to draw the tab menu.\n\u00a7eDoesn't currently work!",
-            category = "Tab", options = {"Top", "Bottom", "Left"}
-    )
-    public static int location = 0;
-
-    @Property(
             type = PropertyType.SWITCH,
             name = "Show Header",
             description = "Show the header on the tab menu.",
@@ -202,6 +194,14 @@ public class TabulousConfig extends Vigilant {
             category = "Hypixel", subcategory = "NPCs"
     )
     public static boolean hideNPCs = true;
+
+    @Property(
+            type = PropertyType.SWITCH,
+            name = "Special Custom Name in BedWars",
+            description = "Make your custom name show your team in BedWars, for example on Green team:\n\u00a7c[\u00a7fYOUTUBE\u00a7c] Bobfish21 \u00a7r--> \u00a7a\u00a7lG \u00a7r\u00a7aBobfish21\n\u00a7eMake sure Hide Custom Name Ingame is off for it to work. Might also be buggy at the moment!",
+            category = "Hypixel", subcategory = "BedWars"
+    )
+    public static boolean customNameBW = false;
 
     @Property(
             type = PropertyType.SWITCH, name = "Cleaner Tab in SkyBlock",
