@@ -7,6 +7,7 @@ import gg.essential.api.EssentialAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiPlayerTabOverlay;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.settings.KeyBinding;
@@ -16,6 +17,7 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.GuiIngameForge;
+import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -40,6 +42,7 @@ public abstract class GuiPlayerTabOverlayMixin {
     private static final Pattern validMinecraftUsername = Pattern.compile("\\w{1,16}");
     private static final Pattern skyblockNameRegex = Pattern.compile("![A-D]-[a-v]");
     private NetworkPlayerInfo currentInfo;
+    private int winTop = TabulousConfig.topPosition;
 
     @Final
     @Shadow
@@ -122,7 +125,19 @@ public abstract class GuiPlayerTabOverlayMixin {
 
     @ModifyVariable(method = "renderPlayerlist", at = @At(value = "STORE", ordinal = 0), ordinal = 9)
     public int setTop(int top) {
-        return TabulousConfig.topPosition;
+        ScaledResolution resolution = new ScaledResolution(mc);
+        switch (TabulousConfig.position) {
+            default:
+                winTop = TabulousConfig.topPosition;
+                break;
+            case 3:
+                winTop = resolution.getScaledHeight() / 3;
+                break;
+            case 4:
+                winTop = (int) (resolution.getScaledHeight() / 1.5);
+                break;
+        }
+        return winTop;
     }
 
     @ModifyVariable(method = "renderPlayerlist", at = @At("STORE"))
@@ -180,7 +195,7 @@ public abstract class GuiPlayerTabOverlayMixin {
                 ci.cancel();
             } else {
                 if (headerList != null) {
-                    int top2 = TabulousConfig.topPosition;
+                    int top2 = winTop;
                     for (String s : headerList) {
                         int strWidth = this.mc.fontRendererObj.getStringWidth(s);
                         drawString(mc.fontRendererObj, s, (float) (this.width / 2 - strWidth / 2), (float) top2, -1);
@@ -190,7 +205,7 @@ public abstract class GuiPlayerTabOverlayMixin {
             }
         } else {
             if (headerList != null) {
-                int top2 = TabulousConfig.topPosition;
+                int top2 = winTop;
                 for (String s : headerList) {
                     int strWidth = this.mc.fontRendererObj.getStringWidth(s);
                     drawString(mc.fontRendererObj, s, (float) (this.width / 2 - strWidth / 2), (float) top2, -1);
@@ -211,7 +226,7 @@ public abstract class GuiPlayerTabOverlayMixin {
     public void renderNames(Args args) {
         if (args.get(0).toString().contains(mc.getSession().getUsername())) {
             if (!TabulousConfig.myNameText.equals("default")) {
-                if (inGame && !TabulousConfig.hideCustomNameIngame && Tabulous.isBedWars && TabulousConfig.customNameBW) {
+                if (inGame && Tabulous.isBedWars && TabulousConfig.customNameBW) {
                     String name = TabulousConfig.myNameText;
                     if (TabulousConfig.myNameText.startsWith("\u00a7")) {
                         name = TabulousConfig.myNameText.substring(2);
@@ -320,7 +335,6 @@ public abstract class GuiPlayerTabOverlayMixin {
         }
     }
 
-
     @Inject(method = "renderPlayerlist", at = @At("HEAD"), cancellable = true)
     public void renderPlayerlist(int width, Scoreboard scoreboardIn, ScoreObjective scoreObjectiveIn, CallbackInfo ci) {
         if (TabulousConfig.disabled) {
@@ -330,10 +344,9 @@ public abstract class GuiPlayerTabOverlayMixin {
             ci.cancel();
         }
         percentComplete = clamp(easeOut(percentComplete, retract ? 0f : 1f));
-        //if (retract && Keyboard.isKeyDown(mc.gameSettings.keyBindPlayerList.getKeyCode())) {      // commented out because it caused issues
-        //    retract = false;
-        //    KeyBinding.setKeyBindState(mc.gameSettings.keyBindPlayerList.getKeyCode(), false);
-        //}
+        if (retract && Keyboard.isKeyDown(mc.gameSettings.keyBindPlayerList.getKeyCode())) {   // im so smart
+            retract = false;
+        }
         if (retract && percentComplete == 0f) {
             retract = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindPlayerList.getKeyCode(), false);

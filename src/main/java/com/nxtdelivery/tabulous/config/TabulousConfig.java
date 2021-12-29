@@ -29,6 +29,14 @@ public class TabulousConfig extends Vigilant {
     public static boolean animations = true;
 
     @Property(
+            type = PropertyType.SELECTOR,
+            name = "Tab Position",
+            description = "Change where the tab is in your game.\n\u00a7eExperimental!",
+            category = "Tab", options = {"Top (Default)", "Top Left", "Top Right", "Left", "Bottom (bit broken)"}
+    )
+    public static int position = 0;
+
+    @Property(
             type = PropertyType.SWITCH,
             name = "Show Header",
             description = "Show the header on the tab menu.",
@@ -198,7 +206,7 @@ public class TabulousConfig extends Vigilant {
     @Property(
             type = PropertyType.SWITCH,
             name = "Special Custom Name in BedWars",
-            description = "Make your custom name show your team in BedWars, for example on Green team:\n\u00a7c[\u00a7fYOUTUBE\u00a7c] Bobfish21 \u00a7r--> \u00a7a\u00a7lG \u00a7r\u00a7aBobfish21\n\u00a7eMake sure Hide Custom Name Ingame is off for it to work. Might also be buggy at the moment!",
+            description = "Make your custom name show your team in BedWars, for example on Green team:\n\u00a7c[\u00a7fYOUTUBE\u00a7c] Bobfish21 \u00a7r--> \u00a7a\u00a7lG \u00a7r\u00a7aBobfish21",
             category = "Hypixel", subcategory = "BedWars"
     )
     public static boolean customNameBW = false;
