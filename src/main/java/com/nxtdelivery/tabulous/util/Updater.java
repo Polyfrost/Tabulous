@@ -1,6 +1,8 @@
 package com.nxtdelivery.tabulous.util;
 
 import com.google.gson.JsonObject;
+import com.nxtdelivery.tabulous.Tabulous;
+import com.nxtdelivery.tabulous.config.TabulousConfig;
 import gg.essential.api.EssentialAPI;
 import gg.essential.api.utils.Multithreading;
 import gg.essential.api.utils.WebUtil;
@@ -9,8 +11,6 @@ import kotlin.Unit;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import org.apache.commons.lang3.StringUtils;
-import com.nxtdelivery.tabulous.Tabulous;
-import com.nxtdelivery.tabulous.config.TabulousConfig;
 
 import java.io.File;
 import java.io.IOException;

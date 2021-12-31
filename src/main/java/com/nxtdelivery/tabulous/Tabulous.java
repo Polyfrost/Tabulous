@@ -91,7 +91,7 @@ public class Tabulous {
             isSkyblock = false;
             hideWhiteNames = false;
             isBedWars = false;
-        },20);
+        }, 20);
     }
 
 

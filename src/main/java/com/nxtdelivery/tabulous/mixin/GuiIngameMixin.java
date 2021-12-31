@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class GuiIngameMixin {
     @Inject(method = "renderBossHealth", at = @At("HEAD"), cancellable = true)
     public void cancelBossBar(CallbackInfo ci) {
-        if(Minecraft.getMinecraft().gameSettings.keyBindPlayerList.isKeyDown()) {
-            if(TabulousConfig.cancelBossbar) {
+        if (Minecraft.getMinecraft().gameSettings.keyBindPlayerList.isKeyDown()) {
+            if (TabulousConfig.cancelBossbar) {
                 ci.cancel();
             }
         }

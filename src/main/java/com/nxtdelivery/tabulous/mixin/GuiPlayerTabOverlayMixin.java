@@ -83,7 +83,8 @@ public abstract class GuiPlayerTabOverlayMixin {
         if (TabulousConfig.hideNPCs && EssentialAPI.getMinecraftUtil().isHypixel()) {
             try {
                 list.removeIf(info -> getPlayerName(info).startsWith("\u00A78[NPC]") || getPlayerName(info).startsWith("\u00a7e[NPC]") || getPlayerName(info).startsWith("\u00a75[NPC]"));
-                if (!Tabulous.hideWhiteNames && inGame) list.removeIf(info -> !getPlayerName(info).startsWith("\u00a7"));
+                if (!Tabulous.hideWhiteNames && inGame)
+                    list.removeIf(info -> !getPlayerName(info).startsWith("\u00a7"));
             } catch (Exception ignored) {
             }
         }
@@ -234,10 +235,10 @@ public abstract class GuiPlayerTabOverlayMixin {
                     if (name.startsWith("[")) {
                         name = name.substring(name.indexOf("]") + 2);
                     }
-                    if(!Character.isLetterOrDigit(args.get(0).toString().charAt(2))) {
+                    if (!Character.isLetterOrDigit(args.get(0).toString().charAt(2))) {
                         name = args.get(0).toString().substring(0, 10) + name;
                         args.set(0, name);
-                    } else args.set(0,TabulousConfig.myNameText);
+                    } else args.set(0, TabulousConfig.myNameText);
                 } else if (!TabulousConfig.hideCustomNameIngame) args.set(0, TabulousConfig.myNameText);
                 else if (!inGame) args.set(0, TabulousConfig.myNameText);
 
