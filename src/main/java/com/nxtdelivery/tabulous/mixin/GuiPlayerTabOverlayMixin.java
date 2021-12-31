@@ -83,7 +83,7 @@ public abstract class GuiPlayerTabOverlayMixin {
         if (TabulousConfig.hideNPCs && EssentialAPI.getMinecraftUtil().isHypixel()) {
             try {
                 list.removeIf(info -> getPlayerName(info).startsWith("\u00A78[NPC]") || getPlayerName(info).startsWith("\u00a7e[NPC]") || getPlayerName(info).startsWith("\u00a75[NPC]"));
-                if (!Tabulous.isTNT) list.removeIf(info -> !getPlayerName(info).startsWith("\u00a7"));
+                if (!Tabulous.hideWhiteNames && inGame) list.removeIf(info -> !getPlayerName(info).startsWith("\u00a7"));
             } catch (Exception ignored) {
             }
         }
@@ -371,6 +371,7 @@ public abstract class GuiPlayerTabOverlayMixin {
         }
         if (!TabulousConfig.showHeader) {
             header = null;
+            headerList = null;
         }
     }
 

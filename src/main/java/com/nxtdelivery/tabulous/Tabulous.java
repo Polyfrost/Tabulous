@@ -30,7 +30,7 @@ public class Tabulous {
     public static TabulousConfig config;
     private static boolean isPatcher = false;
     public static boolean isSkyblock = false;
-    public static boolean isTNT = false;
+    public static boolean hideWhiteNames = false;
     public static boolean isBedWars = false;
     private static final Set<String> skyblockInAllLanguages = Sets.newHashSet("SKYBLOCK", "\u7A7A\u5C9B\u751F\u5B58", "\u7A7A\u5CF6\u751F\u5B58");
     private static final Minecraft mc = Minecraft.getMinecraft();
@@ -65,13 +65,13 @@ public class Tabulous {
                 if (!mc.isSingleplayer() && player.getClientBrand() != null) {
                     if (!player.getClientBrand().contains("Hypixel")) {
                         isSkyblock = false;
-                        isTNT = false;
+                        hideWhiteNames = false;
                         isBedWars = false;
                         return;
                     }
                 } else {
                     isSkyblock = false;
-                    isTNT = false;
+                    hideWhiteNames = false;
                     isBedWars = false;
                     return;
                 }
@@ -83,13 +83,13 @@ public class Tabulous {
                     for (String skyblock : skyblockInAllLanguages) {
                         isSkyblock = objectiveName.startsWith(skyblock);
                     }
-                    isTNT = objectiveName.contains("TNT");
+                    hideWhiteNames = objectiveName.contains("TNT") || objectiveName.contains("PVP RUN") || objectiveName.contains("BOW SPLEEF") || objectiveName.contains("PARTY GAMES");
                     isBedWars = objectiveName.contains("BED WARS");
                     return;
                 }
             }
             isSkyblock = false;
-            isTNT = false;
+            hideWhiteNames = false;
             isBedWars = false;
         },20);
     }
