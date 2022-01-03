@@ -14,10 +14,13 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.Set;
@@ -28,7 +31,7 @@ public class Tabulous {
     public static File jarFile;
     public static File modDir = new File(new File(Minecraft.getMinecraft().mcDataDir, "W-OVERFLOW"), NAME);
     public static TabulousConfig config;
-    private static boolean isPatcher = false;
+    private static boolean isOldPatcher = false;
     public static boolean isSkyblock = false;
     public static boolean hideWhiteNames = false;
     public static boolean isBedWars = false;
@@ -52,7 +55,14 @@ public class Tabulous {
 
     @Mod.EventHandler
     protected void onPostInitialization(FMLPostInitializationEvent event) {
-        isPatcher = Loader.isModLoaded("patcher");
+        for (ModContainer mod : Loader.instance().getActiveModList()) {
+            if ("patcher".equals(mod.getModId())) {
+                if (!((new DefaultArtifactVersion(StringUtils.substringBefore(mod.getVersion(), "+")).compareTo(new DefaultArtifactVersion("1.8.0")) >= 0) && !(mod.getVersion().startsWith("1.8.0+beta-1")))) {
+                    isOldPatcher = true;
+                }
+            }
+        }
+        System.out.println(isOldPatcher);
     }
 
     @SubscribeEvent
@@ -96,7 +106,7 @@ public class Tabulous {
 
 
     public static boolean isTabHeightAllow() {
-        return isPatcher && PatcherConfig.tabHeightAllow;
+        return isOldPatcher && PatcherConfig.tabHeightAllow;
     }
 
 }
