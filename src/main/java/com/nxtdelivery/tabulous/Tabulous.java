@@ -19,8 +19,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.Set;
@@ -31,7 +29,7 @@ public class Tabulous {
     public static File jarFile;
     public static File modDir = new File(new File(Minecraft.getMinecraft().mcDataDir, "W-OVERFLOW"), NAME);
     public static TabulousConfig config;
-    private static boolean isOldPatcher = false;
+    private static boolean isPatcher = false;
     public static boolean isSkyblock = false;
     public static boolean hideWhiteNames = false;
     public static boolean isBedWars = false;
@@ -57,12 +55,10 @@ public class Tabulous {
     protected void onPostInitialization(FMLPostInitializationEvent event) {
         for (ModContainer mod : Loader.instance().getActiveModList()) {
             if ("patcher".equals(mod.getModId())) {
-                if (!((new DefaultArtifactVersion(StringUtils.substringBefore(mod.getVersion(), "+")).compareTo(new DefaultArtifactVersion("1.8.0")) >= 0) && !(mod.getVersion().startsWith("1.8.0+beta-1")))) {
-                    isOldPatcher = true;
-                }
+                isPatcher = true;
+                System.err.println("[Tabulous] Patcher is present. Enabling popMatrix fix");
             }
         }
-        System.out.println(isOldPatcher);
     }
 
     @SubscribeEvent
@@ -106,7 +102,7 @@ public class Tabulous {
 
 
     public static boolean isTabHeightAllow() {
-        return isOldPatcher && PatcherConfig.tabHeightAllow;
+        return isPatcher && PatcherConfig.tabHeightAllow;
     }
 
 }
