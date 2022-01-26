@@ -352,6 +352,7 @@ public abstract class GuiPlayerTabOverlayMixin {
             retract = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindPlayerList.getKeyCode(), false);
         }
+        if (mc.currentScreen != null && TabulousConfig.closeInGUIs) retract = true;
         this.width = width;
         modifyFooter();
         modifyHeader();

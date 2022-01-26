@@ -70,6 +70,14 @@ public class TabulousConfig extends Vigilant {
     public static boolean alwaysAtTop = false;
 
     @Property(
+            type = PropertyType.SWITCH,
+            name = "Close in GUIs",
+            description = "Close the tab menu when you are in a GUI.",
+            category = "Tab", subcategory = "General"
+    )
+    public static boolean closeInGUIs = true;
+
+    @Property(
             type = PropertyType.SLIDER,
             name = "Top Position",
             description = "Position of the top of the tab menu. (default: 10)\nSet it to 0 to be seamless with the top of the screen.\n\u00a7eNote: If you have Patcher enabled, you need to change the 'Tab Height' as well, or just disable it.",
