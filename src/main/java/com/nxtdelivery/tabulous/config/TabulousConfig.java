@@ -25,7 +25,7 @@ public class TabulousConfig extends Config {
     @Slider(
             name = "Animation Speed",
             category = "Tab", subcategory = "Animations",
-            min = 2f, max = 30f, step = 1
+            min = 2f, max = 30f
     )
     public static float animSpeed = 10f;
 
@@ -35,7 +35,7 @@ public class TabulousConfig extends Config {
     )
     public static int position = 0;
 
-    @cc.polyfrost.oneconfig.config.annotations.Checkbox(
+    @Checkbox(
             name = "Show Self At Top",
             category = "Tab", subcategory = "General"
     )
@@ -120,6 +120,11 @@ public class TabulousConfig extends Config {
     )
     public static boolean headPos = false;
 
+    @Info(
+            type = InfoType.INFO, category = "Tabulous Customization", subcategory = "Custom Text", size = OptionSize.DUAL,
+            text = "Set any of these to 'default' to disable them, and show them normally."
+    )
+    public static boolean ignored1 = false;
     @Text(
             name = "Custom Header Text", multiline = true,
             category = "Tabulous Customization", subcategory = "Custom Text"
@@ -177,14 +182,14 @@ public class TabulousConfig extends Config {
     public static boolean hideNPCs = true;
 
     @Info(
-            type = InfoType.INFO, category = "Hypixel", subcategory = "BedWars", size = OptionSize.DUAL,
-            text = "This option will make your custom name show your team in BedWars, \nfor example on Green team: §c[§fYOUTUBE§c] Bobfish21 §r--> §a§lG §r§aBobfish21)"
+            type = InfoType.INFO, category = "Hypixel", subcategory = "Bedwars", size = OptionSize.DUAL,
+            text = "This option will make your custom name show your team in BedWars, (e.g. on Green team: [YOUTUBE] Bobfish21 -> G Bobfish21)"
     )
     public static boolean ignored = false;
 
     @Checkbox(
-            name = "Special Custom Name in BedWars",
-            category = "Hypixel", subcategory = "BedWars"
+            name = "Special Custom Name in Bedwars",
+            category = "Hypixel", subcategory = "Bedwars"
     )
     public static boolean customNameBW = false;
 
@@ -208,7 +213,7 @@ public class TabulousConfig extends Config {
 
     @Button(
             name = "Update Now",
-            text = "Update (lol)"
+            text = "Update (lol)", subcategory = "Updates", category = "Updates"
     )
     public static Runnable runnable = () -> FMLCommonHandler.instance().exitJava(69, false);
 
