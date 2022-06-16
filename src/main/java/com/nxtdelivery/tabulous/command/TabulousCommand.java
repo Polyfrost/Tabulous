@@ -1,17 +1,14 @@
 package com.nxtdelivery.tabulous.command;
 
+import cc.polyfrost.oneconfig.utils.commands.annotations.Command;
+import cc.polyfrost.oneconfig.utils.commands.annotations.Main;
 import com.nxtdelivery.tabulous.Tabulous;
-import gg.essential.api.EssentialAPI;
-import gg.essential.api.commands.Command;
-import gg.essential.api.commands.DefaultHandler;
 
-public class TabulousCommand extends Command {
-    public TabulousCommand() {
-        super(Tabulous.ID, true);
-    }
+@Command(value = "tabulous", aliases = {"tab"})
+public class TabulousCommand {
 
-    @DefaultHandler
-    public void handle() {
-        EssentialAPI.getGuiUtil().openScreen(Tabulous.config.gui());
+    @Main
+    public static void handle() {
+        Tabulous.config.openGui();
     }
 }

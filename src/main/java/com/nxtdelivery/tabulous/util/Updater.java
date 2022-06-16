@@ -1,13 +1,10 @@
 package com.nxtdelivery.tabulous.util;
 
+import cc.polyfrost.oneconfig.utils.Multithreading;
+import cc.polyfrost.oneconfig.utils.NetworkUtils;
 import com.google.gson.JsonObject;
 import com.nxtdelivery.tabulous.Tabulous;
 import com.nxtdelivery.tabulous.config.TabulousConfig;
-import gg.essential.api.EssentialAPI;
-import gg.essential.api.utils.Multithreading;
-import gg.essential.api.utils.WebUtil;
-import gg.essential.universal.UDesktop;
-import kotlin.Unit;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
+
+import static cc.polyfrost.oneconfig.libs.universal.UDesktop.open;
 
 public class Updater {
     public static String updateUrl = "";
@@ -24,7 +23,7 @@ public class Updater {
     public static void update() {
         Multithreading.runAsync(() -> {
             try {
-                JsonObject latestRelease = WebUtil.fetchJSON("https://api.github.com/repos/W-OVERFLOW/" + Tabulous.ID + "/releases/latest").getObject();
+                JsonObject latestRelease = NetworkUtils.getJsonElement("https://api.github.com/repos/W-OVERFLOW/" + Tabulous.ID + "/releases/latest").getAsJsonObject();
                 latestTag = latestRelease.get("tag_name").getAsString();
                 DefaultArtifactVersion currentVersion = new DefaultArtifactVersion(StringUtils.substringBefore(Tabulous.VER, "-"));
                 DefaultArtifactVersion latestVersion = new DefaultArtifactVersion(StringUtils.substringBefore(StringUtils.substringAfter(latestTag, "v"), "-"));
@@ -34,7 +33,7 @@ public class Updater {
                 updateUrl = latestRelease.get("assets").getAsJsonArray().get(0).getAsJsonObject().get("browser_download_url").getAsString();
                 if (!updateUrl.isEmpty()) {
                     if (TabulousConfig.showUpdate) {
-                        EssentialAPI.getNotifications().push(Tabulous.NAME, Tabulous.NAME + " has a new update (" + latestTag + ")! Click here to download it automatically!", Updater::openUpdateGui);
+                        //TODO EssentialAPI.getNotifications().push(Tabulous.NAME, Tabulous.NAME + " has a new update (" + latestTag + ")! Click here to download it automatically!", Updater::openUpdateGui);
                     }
                     shouldUpdate = true;
                 }
@@ -44,16 +43,11 @@ public class Updater {
         });
     }
 
-    public static Unit openUpdateGui() {
-        EssentialAPI.getGuiUtil().openScreen(new DownloadGui());
-        return Unit.INSTANCE;
-    }
-
     public static boolean download(String url, File file) {
         if (file.exists()) return true;
         url = url.replace(" ", "%20");
         try {
-            WebUtil.downloadToFile(url, file, Tabulous.NAME + "/" + Tabulous.VER);
+            NetworkUtils.downloadFile(url, file);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -61,17 +55,14 @@ public class Updater {
         return file.exists();
     }
 
-    /**
-     * Adapted from RequisiteLaunchwrapper under LGPLv3
-     * https://github.com/Qalcyo/RequisiteLaunchwrapper/blob/main/LICENSE
-     */
+
     public static void addShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Opening Deleter task...");
             try {
                 String runtime = getJavaRuntime();
                 if (Minecraft.isRunningOnMac) {
-                    UDesktop.open(Tabulous.jarFile.getParentFile());
+                    open(Tabulous.jarFile.getParentFile());
                 }
                 File file = new File(Tabulous.modDir.getParentFile(), "Deleter-1.2.jar");
                 Runtime.getRuntime()
@@ -86,7 +77,7 @@ public class Updater {
     /**
      * Gets the current Java runtime being used.
      *
-     * @link https://stackoverflow.com/a/47925649
+     * @link <a href="https://stackoverflow.com/a/47925649">...</a>
      */
     public static String getJavaRuntime() throws IOException {
         String os = System.getProperty("os.name");

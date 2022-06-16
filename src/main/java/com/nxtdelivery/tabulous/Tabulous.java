@@ -1,5 +1,6 @@
 package com.nxtdelivery.tabulous;
 
+import cc.polyfrost.oneconfig.utils.commands.CommandManager;
 import club.sk1er.patcher.config.PatcherConfig;
 import com.google.common.collect.Sets;
 import com.nxtdelivery.tabulous.command.TabulousCommand;
@@ -45,9 +46,8 @@ public class Tabulous {
     @Mod.EventHandler
     protected void onInitialization(FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
-        new TabulousCommand().register();
+        CommandManager.INSTANCE.registerCommand(TabulousCommand.class);
         config = new TabulousConfig();
-        config.preload();
         Updater.update();
     }
 
@@ -89,8 +89,10 @@ public class Tabulous {
                     for (String skyblock : skyblockInAllLanguages) {
                         isSkyblock = objectiveName.startsWith(skyblock);
                     }
+                    System.out.println(objectiveName);
                     hideWhiteNames = objectiveName.contains("TNT") || objectiveName.contains("PVP RUN") || objectiveName.contains("BOW SPLEEF") || objectiveName.contains("PARTY GAMES");
-                    isBedWars = objectiveName.contains("BED WARS");
+                    isBedWars = objectiveName.equals("BED WARS");
+                    System.out.println(hideWhiteNames + " bw=" + hideWhiteNames);
                     return;
                 }
             }

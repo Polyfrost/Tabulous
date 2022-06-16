@@ -4,7 +4,6 @@
     "name": "${name}",
     "description": "A fully customizable, lightweight tab mod, which doesn't overwrite the rendering system of Minecraft.",
     "version": "${version}",
-    "mcversion": "${mcversion}",
     "url": "https://github.com/W-OVERFLOW/Tabulous",
     "updateUrl": "https://github.com/W-OVERFLOW/Tabulous/releases",
     "authorList": [
