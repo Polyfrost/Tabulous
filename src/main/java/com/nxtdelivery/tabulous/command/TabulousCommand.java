@@ -8,7 +8,7 @@ import com.nxtdelivery.tabulous.Tabulous;
 public class TabulousCommand {
 
     @Main
-    public static void handle() {
+    public void handle() {
         Tabulous.config.openGui();
     }
 }

@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.throwables.MixinException;
 import java.util.List;
 import java.util.regex.Pattern;
 
-@Mixin(value = GuiPlayerTabOverlay.class, priority = Integer.MIN_VALUE)
+@Mixin(value = GuiPlayerTabOverlay.class, priority = 990)
 public abstract class GuiPlayerTabOverlayMixin {
     private float percentComplete = 0f;
     private boolean retract = false;
@@ -47,7 +47,6 @@ public abstract class GuiPlayerTabOverlayMixin {
     @Final
     @Shadow
     private Minecraft mc;
-
 
     @Shadow
     private IChatComponent footer;
@@ -114,7 +113,7 @@ public abstract class GuiPlayerTabOverlayMixin {
     private int changeWidth(int k) {
         int strWidth;
         if (playerName.contains(mc.getSession().getUsername())) {
-            if (!TabulousConfig.myNameText.equals("default")) {
+            if (!TabulousConfig.myNameText.isEmpty()) {
                 strWidth = mc.fontRendererObj.getStringWidth(TabulousConfig.myNameText);
             } else {
                 strWidth = k;
@@ -144,7 +143,7 @@ public abstract class GuiPlayerTabOverlayMixin {
 
     @ModifyVariable(method = "renderPlayerlist", at = @At("STORE"))
     public boolean setFlag(boolean flag) {
-        if (TabulousConfig.dontShowHeads) flag = false;
+        if (!TabulousConfig.showHeads) flag = false;
         shouldRenderHeads = flag;
         return flag;
     }
@@ -227,7 +226,7 @@ public abstract class GuiPlayerTabOverlayMixin {
     @ModifyArgs(method = "renderPlayerlist", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawStringWithShadow(Ljava/lang/String;FFI)I", ordinal = 2))
     public void renderNames(Args args) {
         if (args.get(0).toString().contains(mc.getSession().getUsername())) {
-            if (!TabulousConfig.myNameText.equals("default")) {
+            if (!TabulousConfig.myNameText.isEmpty()) {
                 if (inGame && Tabulous.isBedWars && TabulousConfig.customNameBW) {
                     String name = TabulousConfig.myNameText;
                     if (TabulousConfig.myNameText.startsWith("\u00a7")) {
@@ -360,7 +359,7 @@ public abstract class GuiPlayerTabOverlayMixin {
     }
 
     private void modifyFooter() {
-        if (!TabulousConfig.footerText.equals("default")) {
+        if (!TabulousConfig.footerText.isEmpty()) {
             footer = new ChatComponentText(TabulousConfig.footerText);
         }
         if (!TabulousConfig.showFooter) {
@@ -369,7 +368,7 @@ public abstract class GuiPlayerTabOverlayMixin {
     }
 
     private void modifyHeader() {
-        if (!TabulousConfig.headerText.equals("default")) {
+        if (!TabulousConfig.headerText.isEmpty()) {
             header = new ChatComponentText(TabulousConfig.headerText);
         }
         if (!TabulousConfig.showHeader) {
@@ -377,7 +376,6 @@ public abstract class GuiPlayerTabOverlayMixin {
             headerList = null;
         }
     }
-
 
     @Inject(method = "updatePlayerList", at = @At("HEAD"))
     public void updatePlayerList(CallbackInfo ci) {
@@ -388,7 +386,6 @@ public abstract class GuiPlayerTabOverlayMixin {
             }
         }
     }
-
 
     private static float clamp(float number) {
         return number < (float) 0.0 ? (float) 0.0 : Math.min(number, (float) 1.0);
@@ -401,6 +398,4 @@ public abstract class GuiPlayerTabOverlayMixin {
             return goal;
         }
     }
-
-
 }

@@ -8,7 +8,6 @@ import cc.polyfrost.oneconfig.config.data.Mod;
 import cc.polyfrost.oneconfig.config.data.ModType;
 import cc.polyfrost.oneconfig.config.data.OptionSize;
 import cc.polyfrost.oneconfig.config.migration.VigilanceMigrator;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class TabulousConfig extends Config {
     @Switch(
@@ -108,10 +107,10 @@ public class TabulousConfig extends Config {
     public static int marginFix = 0;
 
     @Switch(
-            name = "Don't Show Heads",
+            name = "Show Heads",
             category = "Tab", subcategory = "Heads"
     )
-    public static boolean dontShowHeads = false;
+    public static boolean showHeads = true;
 
     @DualOption(
             name = "Head Position",
@@ -122,27 +121,27 @@ public class TabulousConfig extends Config {
 
     @Info(
             type = InfoType.INFO, category = "Tabulous Customization", subcategory = "Custom Text", size = OptionSize.DUAL,
-            text = "Set any of these to 'default' to disable them, and show them normally."
+            text = "Leave any of them blank to disable them and show them normally."
     )
     public static boolean ignored1 = false;
+
     @Text(
-            name = "Custom Header Text", multiline = true,
+            name = "Custom Header Text",
             category = "Tabulous Customization", subcategory = "Custom Text"
     )
-    public static String headerText = "default";
+    public static String headerText;
 
     @Text(
             name = "Custom Footer Text",
-            multiline = true,
             category = "Tabulous Customization", subcategory = "Custom Text"
     )
-    public static String footerText = "default";
+    public static String footerText;
 
     @Text(
             name = "Custom Name Text",
             category = "Tabulous Customization", subcategory = "Custom Text"
     )
-    public static String myNameText = "default";
+    public static String myNameText;
 
     @Checkbox(
             name = "Hide Custom Name Ingame",
@@ -198,26 +197,20 @@ public class TabulousConfig extends Config {
             category = "Hypixel", subcategory = "SkyBlock"
     )
     public static boolean cleanerSkyBlockTabInfo = true;
+
     @Switch(
             name = "Default Tab in SkyBlock",
             category = "Hypixel", subcategory = "SkyBlock"
     )
     public static boolean defaultSkyBlockTab = false;
 
-
-    @Checkbox(
-            name = "Show Update Notification",
-            subcategory = "Updates", category = "Updates"
-    )
-    public static boolean showUpdate = true;
-
-    @Button(
-            name = "Update Now",
-            text = "Update (lol)", subcategory = "Updates", category = "Updates"
-    )
-    public static Runnable runnable = () -> FMLCommonHandler.instance().exitJava(69, false);
-
     public TabulousConfig() {
         super(new Mod("Tabulous", ModType.UTIL_QOL, new VigilanceMigrator("./W-OVERFLOW/Tabulous/tabulous.toml")), "tabulous.json");
+        initialize();
+        addDependency("animSpeed", "animations");
+        addDependency("hidePingInGame", "renderPing");
+        addDependency("headPos", "showHeads");
+        addDependency("headerText", "showHeader");
+        addDependency("footerText", "showFooter");
     }
 }
